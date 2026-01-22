@@ -20,17 +20,17 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    op.execute(text(
-        """
-            CREATE DATABASE app_db;
-        """
-    ))
+    # op.execute(text(
+    #     """
+    #         CREATE DATABASE app_db;
+    #     """
+    # ))
 
 
 def downgrade() -> None:
     """Downgrade schema."""
-    op.execute(text(
-        """
-            DROP DATABASE IF EXISTS app_db;
-        """
-    ))
+    # op.execute(text(
+    #     """
+    #         DROP DATABASE IF EXISTS app_db;
+    #     """
+    # ))
