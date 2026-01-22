@@ -1,11 +1,10 @@
 import aiohttp
 
 
-class BaseFetch:
+class BaseFetchHttp:
 
     # Асинхронный http-клиент на выбор
     _http_client = aiohttp.client.ClientSession
-    # _http_client = httpx.AsyncClient
 
     async def get(self, url: str) -> dict:
         """GET-запрос"""

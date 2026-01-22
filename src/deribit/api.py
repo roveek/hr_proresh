@@ -15,11 +15,23 @@ class Config(pydantic_settings.BaseSettings):
     )
 
 
-class Fetch(utils.BaseFetch):
-    """Класс запросов к API Deribit"""
+class FetchHttpRepository(utils.BaseFetchHttp):
+    """Репозиторий отвечает за получение данных от API Deribit"""
 
     def __init__(self, config=None):
         self.config = config or Config()
+
+    async def fetch_index_price(self, index_name: str) -> dict:
+        url_path = f'public/get_index_price?index_name={index_name}'
+        url = f'{self.config.deribit_url}/{url_path}'
+        return await self.get(url)
+
+
+class FetchSerice:
+    """Сервис отвечает за извлечение данных из ответа API Deribit"""
+
+    def __init__(self):
+        self.repository = FetchHttpRepository()
 
     async def btc_usd(self) -> float:
         return await self._fetch_index_price('btc_usd')
@@ -28,13 +40,9 @@ class Fetch(utils.BaseFetch):
         return await self._fetch_index_price('eth_usd')
 
     async def _fetch_index_price(self, index_name: str) -> float:
-        url_path = f'public/get_index_price?index_name={index_name}'
-        url = f'{self.config.deribit_url}/{url_path}'
-        fetched_price = await self.get(url)
-        return self._extract_index_price(fetched_price)
+        return self._extract_index_price(
+            await self.repository.fetch_index_price(index_name)
+        )
 
     def _extract_index_price(self, price_jsonrpc2: dict) -> float:
         return price_jsonrpc2.get('result', {}).get('index_price')
-
-
-fetch = Fetch()

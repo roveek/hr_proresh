@@ -1,8 +1,11 @@
+import logging
 import unittest.mock
 
 import pytest
 
 import deribit
+
+logger = logging.getLogger(__name__)
 
 index_price = 11111.1
 response_json = {
@@ -26,14 +29,18 @@ response_json2 = {
 
 
 @pytest.mark.anyio
-async def test_deribit():
+async def test_deribit(caplog):
 
-    with unittest.mock.patch('deribit.fetch._get',
-                             unittest.mock.AsyncMock(
-                                 return_value=response_json)):
+    with unittest.mock.patch(
+            'deribit.fetch.repository.get',
+            unittest.mock.AsyncMock(return_value=response_json)):
         assert await deribit.fetch.btc_usd() == index_price
 
-    with unittest.mock.patch('deribit.fetch._get',
-                             unittest.mock.AsyncMock(
-                                 return_value=response_json2)):
+    with unittest.mock.patch(
+            'deribit.fetch.repository.get',
+            unittest.mock.AsyncMock(return_value=response_json2)):
         assert await deribit.fetch.eth_usd() == index_price2
+
+    # real_call = await deribit.fetch.btc_usd()
+    # logger.info(f'{real_call=}')
+    # assert isinstance(real_call, float)

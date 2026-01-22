@@ -1,5 +1,3 @@
-import datetime
-
 import celery
 import pydantic
 import pydantic_settings
@@ -14,8 +12,5 @@ class Config(pydantic_settings.BaseSettings):
 
 
 celery_app = celery.Celery(__name__, **Config().model_dump())
-
-beat_schedule = {
-    "task": "tasks.fetch_prices",
-    "schedule": datetime.timedelta(minutes=1),
-}
+# celery_app = celery.Celery(__name__, **Config().model_dump())
+celery_app.config_from_object('celeryconfig')
