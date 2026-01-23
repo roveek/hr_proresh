@@ -9,7 +9,7 @@ import deribit
 @celery.shared_task
 def fetch_prices():
     loguru.logger.info('Fetching prices task')
-    asyncio.run(_process_fetch_prices())
+    asyncio.get_event_loop().run_until_complete(_process_fetch_prices())
     return 'OK'
 
 
