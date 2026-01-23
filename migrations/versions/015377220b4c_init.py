@@ -22,7 +22,6 @@ def upgrade() -> None:
     """Upgrade schema."""
     # op.execute(text(
     #     """
-    #         CREATE DATABASE app_db;
     #     """
     # ))
 
@@ -31,6 +30,5 @@ def downgrade() -> None:
     """Downgrade schema."""
     # op.execute(text(
     #     """
-    #         DROP DATABASE IF EXISTS app_db;
     #     """
     # ))

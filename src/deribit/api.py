@@ -15,7 +15,7 @@ class Config(pydantic_settings.BaseSettings):
     )
 
 
-class FetchHttpRepository(utils.BaseFetchHttp):
+class HttpRepository(utils.BaseHttpRepository):
     """Репозиторий отвечает за получение данных от API Deribit"""
 
     def __init__(self, config=None):
@@ -31,12 +31,12 @@ class FetchSerice:
     """Сервис отвечает за извлечение данных из ответа API Deribit"""
 
     def __init__(self):
-        self.repository = FetchHttpRepository()
+        self.repository = HttpRepository()
 
-    async def btc_usd(self) -> float:
+    async def fetch_btc_usd_price(self) -> float:
         return await self._fetch_index_price('btc_usd')
 
-    async def eth_usd(self) -> float:
+    async def fetch_eth_usd_price(self) -> float:
         return await self._fetch_index_price('eth_usd')
 
     async def _fetch_index_price(self, index_name: str) -> float:
@@ -46,3 +46,6 @@ class FetchSerice:
 
     def _extract_index_price(self, price_jsonrpc2: dict) -> float:
         return price_jsonrpc2.get('result', {}).get('index_price')
+
+
+service = FetchSerice()

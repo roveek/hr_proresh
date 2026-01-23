@@ -9,14 +9,18 @@ RUN apt-get update && \
     apt-get install -y curl && \
     rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+RUN useradd --home-dir=/app --uid=1000 --user-group app
+USER 1000
 
-COPY pyproject.toml alembic.ini uv.lock ./
+WORKDIR /app
+ENV PYTHONPATH="/app:${PYTHONPATH}"
+
+COPY --chown=app pyproject.toml alembic.ini uv.lock ./
 RUN uv sync
 
-COPY migrations ./migrations
+COPY --chown=app migrations ./migrations
 
-COPY src ./
+COPY --chown=app src ./
 
 EXPOSE 8000
 

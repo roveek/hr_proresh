@@ -32,15 +32,15 @@ response_json2 = {
 async def test_deribit(caplog):
 
     with unittest.mock.patch(
-            'deribit.fetch.repository.get',
+            'deribit.api.service.repository.get',
             unittest.mock.AsyncMock(return_value=response_json)):
-        assert await deribit.fetch.btc_usd() == index_price
+        assert await deribit.api.service.fetch_btc_usd_price() == index_price
 
     with unittest.mock.patch(
-            'deribit.fetch.repository.get',
+            'deribit.api.service.repository.get',
             unittest.mock.AsyncMock(return_value=response_json2)):
-        assert await deribit.fetch.eth_usd() == index_price2
+        assert await deribit.api.service.fetch_eth_usd_price() == index_price2
 
-    # real_call = await deribit.fetch.btc_usd()
+    # real_call = await deribit.service.btc_usd()
     # logger.info(f'{real_call=}')
     # assert isinstance(real_call, float)

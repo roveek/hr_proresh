@@ -1,7 +1,5 @@
 import importlib
 
-# from . import exceptions as exc
-
 __all__ = [
     'deribit',
 ]
