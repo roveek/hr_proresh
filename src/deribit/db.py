@@ -22,7 +22,7 @@ class DbAsyncRepository:
         )
 
     @property
-    def _session(self):
+    def _session(self) -> sqlalchemy.ext.asyncio.AsyncSession:
         return sqlalchemy.ext.asyncio.async_sessionmaker(self._engine)
 
     async def create_price(self, ticker: str, price: float, timestamp: int):
@@ -32,6 +32,24 @@ class DbAsyncRepository:
                     deribit.models.Price(ticker=ticker, price=price,
                                          timestamp=timestamp),
                 )
+
+    async def get_price(self, ticker: str):
+        async with self._session() as session:
+            (session
+             .query(deribit.models.Price)
+             .filter(deribit.models.Price.ticker == ticker)
+             .order_by(deribit.models.Price.timestamp.desc())
+             )
+
+    async def iter_price(self, ticker: str):
+        async with self._session() as session:
+            yield (
+                session
+                .query(deribit.models.Price)
+                .filter(deribit.models.Price.ticker == ticker)
+                .order_by(deribit.models.Price.timestamp.desc(),)
+                .yield_per(1)
+            )
 
 
 class DbService:
@@ -45,6 +63,9 @@ class DbService:
 
     async def create_price(self, price: deribit.schema.Price):
         await self.repository.create_price(**price.model_dump())
+
+    async def get_last_price(self, ticker: str) -> deribit.schema.Price:
+        ...
 
 
 service = DbService()
