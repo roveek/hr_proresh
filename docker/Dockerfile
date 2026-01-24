@@ -13,15 +13,17 @@ RUN useradd --home-dir=/app --uid=1000 --user-group app
 USER 1000
 
 WORKDIR /app
-ENV PYTHONPATH="/app:${PYTHONPATH}"
+ENV PYTHONPATH="/app/src:${PYTHONPATH}"
 
 COPY --chown=app pyproject.toml alembic.ini uv.lock ./
 RUN uv sync
 
 COPY --chown=app migrations ./migrations
 
-COPY --chown=app src ./
+# Держать код в /app/src, а не в /app, чтобы в docker-compose.yml
+# можно было мапить каталог с хоста в контейнер и использовать --reload
+COPY --chown=app src ./src/
 
 EXPOSE 8000
 
-CMD ["uvicorn", "main:app", "--host=0.0.0.0", "--port=8000"]
+CMD ["uvicorn", "src.main:app", "--host=0.0.0.0", "--port=8000", "--reload"]

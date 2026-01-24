@@ -1,0 +1,20 @@
+meta {
+  name: /prices/last
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{http_host}}/prices/last?ticker=btc_usd
+  body: none
+  auth: inherit
+}
+
+params:query {
+  ticker: btc_usd
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

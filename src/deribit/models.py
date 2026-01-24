@@ -4,7 +4,11 @@ import sqlalchemy.orm
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
-Base = sqlalchemy.orm.declarative_base()
+
+class Base(sqlalchemy.orm.DeclarativeBase):
+
+    def to_dict(self) -> dict:
+        return self.__dict__
 
 
 class Price(Base):

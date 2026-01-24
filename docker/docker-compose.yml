@@ -12,6 +12,8 @@ services:
       #  - env_file или environment
     ports:
       - "8000:8000"
+    volumes:
+      - ../src:/app/src
     networks:
       - common_net
     healthcheck:
@@ -36,10 +38,10 @@ services:
       postgres:
         condition: service_healthy
 
-  celery-worker:
+  celery_worker:
     #profiles: ["disabled"]
     <<: *app_common
-    command: celery --app=celery_app worker --beat --task-events --loglevel=info --queues=celery --concurrency=1
+    command: celery --app=celery_app worker --hostname=celery@%h --task-events --loglevel=info --queues=celery --concurrency=1
     networks:
       - common_net
     deploy:
@@ -49,8 +51,10 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
 
-  celery-beat:
+  celery_beat:
     #profiles: ["disabled"]
     <<: *app_common
     command: celery --app=celery_app beat --loglevel=debug
@@ -59,8 +63,10 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
 
-  celery-flower:
+  celery_flower:
     #profiles: ["disabled"]
     image: mher/flower:2.0.1
     env_file:

@@ -1,5 +1,3 @@
-import pathlib
-
 import pydantic
 import pydantic_settings
 
@@ -9,10 +7,6 @@ import utils
 class Config(pydantic_settings.BaseSettings):
 
     deribit_url: pydantic.HttpUrl = 'https://test.deribit.com/api/v2'
-
-    model_config = pydantic_settings.SettingsConfigDict(
-        env_file=pathlib.Path(__file__).parent / '.env',
-    )
 
 
 class HttpRepository(utils.BaseHttpRepository):
