@@ -1,0 +1,21 @@
+meta {
+  name: /prices
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{http_host}}/prices?ticker=btc_usd&date=2026-01-24
+  body: none
+  auth: inherit
+}
+
+params:query {
+  ticker: btc_usd
+  date: 2026-01-24
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
