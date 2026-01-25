@@ -13,7 +13,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ../src:/app/src
+      - ../src:/app/src  # dev
     networks:
       - common_net
     healthcheck:
@@ -28,6 +28,8 @@ services:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
+      test:
+        condition: service_completed_successfully
 
   migrations:
     <<: *app_common
@@ -38,12 +40,23 @@ services:
       postgres:
         condition: service_healthy
 
+  test:
+    <<: *app_common
+    command: pytest --log-level=debug
+    volumes:
+      - ../src:/app/src  # dev
+      - ../tests:/app/tests  # dev
+    networks:
+      - common_net
+
   celery_worker:
     #profiles: ["disabled"]
     <<: *app_common
-    command: celery --app=celery_app worker --hostname=celery@%h --task-events --loglevel=info --queues=celery --concurrency=1
+    command: celery --app=celery_app worker --task-events --loglevel=info --queues=celery --concurrency=1
     networks:
       - common_net
+    volumes:
+      - ../src:/app/src  # dev
     deploy:
       replicas: 1
     depends_on:
@@ -52,6 +65,8 @@ services:
       postgres:
         condition: service_healthy
       migrations:
+        condition: service_completed_successfully
+      test:
         condition: service_completed_successfully
 
   celery_beat:
@@ -64,6 +79,8 @@ services:
       redis:
         condition: service_healthy
       migrations:
+        condition: service_completed_successfully
+      test:
         condition: service_completed_successfully
 
   celery_flower:

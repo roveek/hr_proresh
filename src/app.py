@@ -12,7 +12,7 @@ TickerAnnotation = Annotated[
     str,
     Query(description='Тикер валюты',
           # `example` has been deprecated,
-          # но в таком виде пример подставляется в поле ввода в /docs
+          # но в таком виде значение-пример подставляется в поле ввода в /docs
           example='btc_usd')
 ]
 DateFilterAnnotation = Annotated[
@@ -31,11 +31,12 @@ async def health_check():
 
 
 @app.get("/prices/last")
-async def get_last_price(ticker: TickerAnnotation
+async def get_last_price(ticker: TickerAnnotation,
+                         deribit_service=fastapi.Depends(deribit.db.DbService)
                          ) -> deribit.schema.Price:
     """Возвращает последний прайс по указанному тикеру"""
 
-    price = await deribit.db.service.get_last_price(ticker)
+    price = await deribit_service.get_last_price(ticker)
     if price is None:
         raise fastapi.HTTPException(
             status_code=fastapi.status.HTTP_404_NOT_FOUND)
@@ -44,9 +45,13 @@ async def get_last_price(ticker: TickerAnnotation
 
 @app.get("/prices")
 async def get_last_price(ticker: TickerAnnotation,
-                         date: DateFilterAnnotation = None
+                         date: DateFilterAnnotation = None,
+                         deribit_service=fastapi.Depends(deribit.db.DbService)
                          ) -> list[deribit.schema.Price]:
-    """Возвращает все прайсы по указанному тикеру"""
+    """Возвращает все прайсы по указанному тикеру
 
-    prices = await deribit.db.service.get_all_prices(ticker, date)
+    Если указать `date`, то вернёт прайсы только за указанную дату.
+    """
+
+    prices = await deribit_service.get_all_prices(ticker, date)
     return prices

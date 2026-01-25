@@ -32,4 +32,4 @@ async def _fetch_prices() -> list[deribit.schema.Price]:
 
 async def _save_prices(prices: list[deribit.schema.Price]):
     for price in prices:
-        await deribit.db.service.create_price(price)
+        await deribit.db.DbService().create_price(price)

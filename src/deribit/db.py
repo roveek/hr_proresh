@@ -86,9 +86,11 @@ class DbAsyncRepository:
 
 class DbService:
 
+    repository_cls = DbAsyncRepository
+
     def __init__(self):
         try:
-            self.repository = DbAsyncRepository()
+            self.repository = self.repository_cls()
         except Exception as exc:
             loguru.logger.error('Failed to initialize DB repository',
                                 exc_info=exc)
@@ -101,20 +103,23 @@ class DbService:
         )
 
     async def create_price(self, price: deribit.schema.Price):
-        await self.repository.create_price(**price.model_dump())
+        """Добавляет в БД прайс"""
+        kwargs = price.model_dump(include={'ticker', 'price', 'timestamp'})
+        await self.repository.create_price(**kwargs)
 
     async def get_last_price(self, ticker: str) -> deribit.schema.Price | None:
+        """Возвращает последний прайс указанного тикера"""
         with loguru.logger.catch():
             price = await anext(self.repository.iter_prices(ticker, yield_per=1), None)
             if price:
                 price = deribit.schema.Price(**price)
             return price
 
-    async def get_all_prices(self, ticker: str, date: datetime.date | None = None) -> list[deribit.schema.Price]:
+    async def get_all_prices(self, ticker: str,
+                             date: datetime.date | None = None,
+                             ) -> list[deribit.schema.Price]:
+        """Возвращает все прайсы указанного тикера с фильтрацией по дате"""
         prices = []
         async for price in self.repository.iter_prices(ticker, date=date):
             prices.append(deribit.schema.Price(**price))
         return prices
-
-
-service = DbService()
