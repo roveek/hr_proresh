@@ -21,8 +21,9 @@ async def _process_fetch_prices():
 
 
 async def _fetch_prices() -> list[deribit.schema.Price]:
-    btc_usd = await deribit.api.service.fetch_btc_usd_price()
-    eth_usd = await deribit.api.service.fetch_eth_usd_price()
+    api_service = deribit.api.FetchSerice()
+    btc_usd = await api_service.fetch_btc_usd_price()
+    eth_usd = await api_service.fetch_eth_usd_price()
 
     return [
         deribit.schema.Price(ticker='btc_usd', price=btc_usd),

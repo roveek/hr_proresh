@@ -28,19 +28,22 @@ response_json2 = {
 }
 
 
+@pytest.fixture
+def api_service():
+    return deribit.api.FetchSerice()
+
+
 @pytest.mark.anyio
-async def test_deribit(caplog):
+async def test_deribit(api_service):
 
-    with unittest.mock.patch(
-            'deribit.api.service.repository.get',
+    with unittest.mock.patch.object(
+            api_service.repository,
+            'get',
             unittest.mock.AsyncMock(return_value=response_json)):
-        assert await deribit.api.service.fetch_btc_usd_price() == index_price
+        assert await api_service.fetch_btc_usd_price() == index_price
 
-    with unittest.mock.patch(
-            'deribit.api.service.repository.get',
+    with unittest.mock.patch.object(
+            api_service.repository,
+            'get',
             unittest.mock.AsyncMock(return_value=response_json2)):
-        assert await deribit.api.service.fetch_eth_usd_price() == index_price2
-
-    # real_call = await deribit.service.btc_usd()
-    # logger.info(f'{real_call=}')
-    # assert isinstance(real_call, float)
+        assert await api_service.fetch_eth_usd_price() == index_price2

@@ -40,6 +40,3 @@ class FetchSerice:
 
     def _extract_index_price(self, price_jsonrpc2: dict) -> float:
         return price_jsonrpc2.get('result', {}).get('index_price')
-
-
-service = FetchSerice()
