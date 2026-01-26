@@ -1,4 +1,3 @@
-import datetime
 import time
 
 import pydantic
@@ -15,11 +14,3 @@ class Price(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(
         extra='ignore',
     )
-
-    @pydantic.computed_field(
-        description='Дата и время в человеческом формате (для наглядности)',
-        # …и демонстрации работы с computed_field
-    )
-    @property
-    def timestamp_as_dt(self) -> str:
-        return datetime.datetime.fromtimestamp(self.timestamp).isoformat(sep=' ')

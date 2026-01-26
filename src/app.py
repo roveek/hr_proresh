@@ -22,7 +22,7 @@ DateFilterAnnotation = Annotated[
 ]
 
 
-@app.get("/healthcheck",
+@app.get('/healthcheck',
          include_in_schema=False)
 async def health_check():
     """Технический endpoint"""
@@ -30,7 +30,7 @@ async def health_check():
     return {"status": "healthy"}
 
 
-@app.get("/prices/last")
+@app.get('/prices/last')
 async def get_last_price(ticker: TickerAnnotation,
                          deribit_service=fastapi.Depends(deribit.db.DbService)
                          ) -> deribit.schema.Price:
@@ -43,7 +43,7 @@ async def get_last_price(ticker: TickerAnnotation,
     return price
 
 
-@app.get("/prices")
+@app.get('/prices')
 async def get_last_price(ticker: TickerAnnotation,
                          date: DateFilterAnnotation = None,
                          deribit_service=fastapi.Depends(deribit.db.DbService)
