@@ -8,7 +8,7 @@ class Config(pydantic_settings.BaseSettings):
     broker: str = pydantic.Field(
         'redis://localhost:6379/0', alias='CELERY_BROKER_URL')
     backend: str = pydantic.Field(
-        'redis://localhost:6379/0', alias='CELERY_RESULT_BACKEND')
+       'redis://localhost:6379/0', alias='CELERY_RESULT_BACKEND')
 
 
 celery_app = celery.Celery(__name__, **Config().model_dump())
