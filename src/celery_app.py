@@ -12,5 +12,4 @@ class Config(pydantic_settings.BaseSettings):
 
 
 celery_app = celery.Celery(__name__, **Config().model_dump())
-# celery_app = celery.Celery(__name__, **Config().model_dump())
 celery_app.config_from_object('celeryconfig')
